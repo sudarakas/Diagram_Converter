@@ -13,34 +13,30 @@ mkdir(outputFolder);
 
 %Display image
 inputImage = imread(inputLocation); 
-figure;
-imshow(inputImage);
-title('Input Image');
 
 %Convert image to grayscale image
 grayImage = rgb2gray(inputImage);
-figure;
-imshow(grayImage);
-title('Grayscale Image');
 
 %Reduce the image size
 [rows,cols] = size(grayImage);
 rows = rows/10; 
 cols = cols/10;
 resizeImage = imresize(grayImage, [rows, cols]);
-figure;
-imshow(resizeImage);
-title('Size Reduced Image');
 
 %Convert the gray image to binary image
 thresholding = adaptthresh(resizeImage, 0.3, 'ForegroundPolarity','dark');
 binaryImage = imbinarize(resizeImage, thresholding);
-figure;
-imshow(binaryImage);
-title('Binary Image');
 outputFile = 'Binary Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
+
+%Subplot the figures
+subplot(2,2,1);imshow(inputImage);title('Input Image');
+subplot(2,2,2);imshow(grayImage);title('Grayscale Image');
+subplot(2,2,3);imshow(resizeImage);title('Size Reduced Image');
+subplot(2,2,4);imshow(binaryImage);title('Binary Image');
+
+
 
 %Bitwise Inversion
 invertedImage = 1-binaryImage;
