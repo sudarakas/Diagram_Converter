@@ -4,7 +4,7 @@ close all;
 clear;
 
 %Input the image & create the output folder
-imgName = 'in2'; %image name
+imgName = '1'; %image name
 inputFile = strcat(imgName, '.jpg');
 inputFolder = './input';
 outputFolder = strcat('./output/', imgName); 
@@ -66,6 +66,7 @@ outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
 %Subplot the figures
+figure;
 subplot(2,2,1);imshow(invertedImage);title('Bitwise Inverted Image');
 subplot(2,2,2);imshow(noiseReducedImage);title('Noise Reduced Image');
 subplot(2,2,3);imshow(filledImage);title('Filled Image');
@@ -76,7 +77,7 @@ subplot(2,2,4);imshow(detectedEdges);title('Detected Edges');
 topPoints = houghpeaks(H, 100);
 
 detectedlLines = houghlines(detectedEdges,theta,rho,topPoints,'FillGap',5,'MinLength',2); 
-figure, imshow(noiseReducedImage), hold on
+figure;subplot(2,2,1); imshow(noiseReducedImage); hold on
 maxLength = 0;
 for i = 1:length(detectedlLines)
    xy = [detectedlLines(i).point1; detectedlLines(i).point2];
@@ -102,18 +103,12 @@ detectedlLines = houghlines(detectedEdges, theta, rho, topPoints);
 appropriateAngle = mode([detectedlLines.theta])+90;
 rotatedImage = imrotate(noiseReducedImage, appropriateAngle);
 rotatedFilledImage = imrotate(filledImage, appropriateAngle);
-figure;
-imshow(rotatedImage);
-title('Rotated Image');
 outputFile = 'Rotated Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
 [rows, cols] = size(rotatedImage);
 
-figure;
-imshow(rotatedFilledImage);
-title('Rotated Filled Image');
 outputFile = 'Rotated Filled Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
@@ -133,17 +128,20 @@ labelMatrixArrows = labelmatrix(connectedComponentsArrows);
 arrowsNew = ismember(labelMatrixArrows, find([statsArrows.Area] >= 10*rows/100));
 
 shapes = rotatedImage - arrows;
-figure;
-imshow(shapes);
-title('Detected Shapes');
+
 outputFile = 'Detected Shapes.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
+%Subplot the figures (2,2,1 already plotted)
+subplot(2,2,2);imshow(rotatedImage);title('Rotated Image');
+subplot(2,2,3);imshow(rotatedFilledImage);title('Rotated Filled Image');
+subplot(2,2,4);imshow(shapes);title('Detected Shapes');
+
 %Detect Rectangales, Circles, Diamonds
 [shape, noShape] = bwlabel(shapes);
 figure;
-imagesc(shape);
+subplot(1,2,1);imagesc(shape);
 axis equal;
 title('Uniqe Shapes');
 outputFile = 'Uniqe Shapes.jpg';
@@ -175,10 +173,9 @@ shapeDiamond = logical(shapeDiamond .* ~shapeCircle);
 
 %Identify arrows
 [arrowL, arrowN] = bwlabel(arrows);
-figure;
-imagesc(arrowL);
+subplot(1,2,2);imagesc(arrowL);
 axis equal;
-
+title('Arrows Heads and Tails');
 arrowProperties = regionprops(arrowL, 'all');
 
 arrowCentroids = cat(1, arrowProperties.Centroid);
