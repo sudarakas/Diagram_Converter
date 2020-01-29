@@ -4,7 +4,7 @@ close all;
 clear;
 
 %Input the image & create the output folder
-imgName = '1'; %image name
+imgName = 'r'; %image name
 inputFile = strcat(imgName, '.jpg');
 inputFolder = './input';
 outputFolder = strcat('./output/', imgName); 
@@ -35,8 +35,6 @@ subplot(2,2,1);imshow(inputImage);title('Input Image');
 subplot(2,2,2);imshow(grayImage);title('Grayscale Image');
 subplot(2,2,3);imshow(resizeImage);title('Size Reduced Image');
 subplot(2,2,4);imshow(binaryImage);title('Binary Image');
-
-
 
 %Bitwise Inversion
 invertedImage = 1-binaryImage;
@@ -78,19 +76,14 @@ topPoints = houghpeaks(H, 100);
 
 detectedlLines = houghlines(detectedEdges,theta,rho,topPoints,'FillGap',5,'MinLength',2); 
 figure;subplot(2,2,1); imshow(noiseReducedImage); hold on
-maxLength = 0;
+
 for i = 1:length(detectedlLines)
    xy = [detectedlLines(i).point1; detectedlLines(i).point2];
    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','blue');
    
    plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','green');
    plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
-
-   length = norm(detectedlLines(i).point1 - detectedlLines(i).point2);
-   if ( length > maxLength)
-      maxLength = length;
-      xyLong = xy;
-   end
+   
 end
 title('Lines Detected Image');
 outputFile = 'Lines Detected Image.jpg';
@@ -122,11 +115,6 @@ arrayImage = rotatedImage - removedCCImage;
 arrayImage = imbinarize(arrayImage);
 
 arrows = bwareaopen(arrayImage, 20);
-connectedComponentsArrows = bwconncomp(arrows);
-statsArrows = regionprops(connectedComponentsArrows, 'Area');
-labelMatrixArrows = labelmatrix(connectedComponentsArrows);
-arrowsNew = ismember(labelMatrixArrows, find([statsArrows.Area] >= 10*rows/100));
-
 shapes = rotatedImage - arrows;
 
 outputFile = 'Detected Shapes.jpg';
@@ -143,8 +131,8 @@ subplot(2,2,4);imshow(shapes);title('Detected Shapes');
 figure;
 subplot(1,2,1);imagesc(shape);
 axis equal;
-title('Uniqe Shapes');
-outputFile = 'Uniqe Shapes.jpg';
+title('Unique Shapes');
+outputFile = 'Unique Shapes.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
