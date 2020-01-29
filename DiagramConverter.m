@@ -40,9 +40,6 @@ subplot(2,2,4);imshow(binaryImage);title('Binary Image');
 
 %Bitwise Inversion
 invertedImage = 1-binaryImage;
-figure;
-imshow(invertedImage);
-title('Bitwise Inverted Image');
 outputFile = 'Bitwise Inverted Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
@@ -52,30 +49,27 @@ connectedComponents = bwconncomp(invertedImage);
 stats = regionprops(connectedComponents, 'Area');
 labelMatrix = labelmatrix(connectedComponents);
 noiseReducedImage = ismember(labelMatrix, find([stats.Area] >= 50*rows/100));
-figure;
-imshow(noiseReducedImage);
-title('Noise Reduced Image');
 outputFile = 'Noise Reduced Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
 %Fill the image
 filledImage = imfill(noiseReducedImage, 'holes');
-figure;
-imshow(filledImage);
-title('Filled Image');
 outputFile = 'Filled Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
 %Detect the edges of the objects
 detectedEdges = edge(filledImage, 'zerocross');
-figure;
-imshow(detectedEdges);
-title('Detected Edges');
 outputFile = 'Detected Edges.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
+
+%Subplot the figures
+subplot(2,2,1);imshow(invertedImage);title('Bitwise Inverted Image');
+subplot(2,2,2);imshow(noiseReducedImage);title('Noise Reduced Image');
+subplot(2,2,3);imshow(filledImage);title('Filled Image');
+subplot(2,2,4);imshow(detectedEdges);title('Detected Edges');
 
 %Hough Transform Mechanism
 [H,theta,rho] = hough(detectedEdges);
