@@ -4,7 +4,7 @@ close all;
 clear;
 
 %Input the image & create the output folder
-imgName = 'r'; %image name
+imgName = '1'; %image name
 inputFile = strcat(imgName, '.jpg');
 inputFolder = './input';
 outputFolder = strcat('./output/', imgName); 
@@ -70,7 +70,7 @@ subplot(2,2,2);imshow(noiseReducedImage);title('Noise Reduced Image');
 subplot(2,2,3);imshow(filledImage);title('Filled Image');
 subplot(2,2,4);imshow(detectedEdges);title('Detected Edges');
 
-%Hough Transform Mechanism
+%Lines detection of the image
 [H,theta,rho] = hough(detectedEdges);
 topPoints = houghpeaks(H, 100);
 
@@ -106,7 +106,7 @@ outputFile = 'Rotated Filled Image.jpg';
 outputLocation = fullfile(outputFolder, outputFile);
 saveas(gcf, outputLocation);
 
-%Seperate Shapes and Arrow Heads
+%Seperate Shapes
 se = strel('diamond', 5);
 openedImage = imopen(rotatedFilledImage, se);
 removedCCImage = bwareaopen(openedImage, 50);
@@ -256,7 +256,7 @@ end
 
 hold on;
 diadsBoundingBoxes = shapeBBs(shapeDiamond, :);
-
+ 
 for i = 1:size(diadsBoundingBoxes,1)
     patch([diadsBoundingBoxes(i,1)+ 0.5*diadsBoundingBoxes(i,3) diadsBoundingBoxes(i,1)+diadsBoundingBoxes(i,3) ...
         diadsBoundingBoxes(i,1)+0.5*diadsBoundingBoxes(i,3) diadsBoundingBoxes(i,1) ],...
